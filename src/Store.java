@@ -7,47 +7,27 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
-/**
- * Class Store
- */
 public class Store {
-
-  //
-  // Fields
-  //
 
   private ArrayList<Order> Orders;
   private ArrayList<Customer> Customers;
-  
-  //
-  // Constructors
-  //
+
   public Store () {
     Orders = new ArrayList<Order>();
     Customers = new ArrayList<Customer>();
   }
-  
-  //
-  // Methods
-  //
-
-
-
 
   public static void main(String[] args) throws IOException
   {
     var comp152Inc = new Store();
     comp152Inc.runStore();
-
   }
 
-  /**
-   */
   public void runStore() throws IOException
   {
     var inputReader = new Scanner(System.in);
     loadStartingCustomers(inputReader);
-    while(true){ //the main run loop
+    while(true){
       printMainMenu();
       var userChoice = inputReader.nextInt();
       switch (userChoice){
@@ -67,7 +47,6 @@ public class Store {
       }
     }
   }
-
   private static void printMainMenu() {
     System.out.println("*****************************************************************************");
     System.out.println("Welcome to the the 1980s Comp152 Store interface, what would you like to do?");
@@ -78,25 +57,20 @@ public class Store {
     System.out.print("Enter the number of your choice:");
   }
 
-
-
-
   private void loadStartingCustomers(Scanner inputReader) throws IOException {
     Path fullPathName;
     String filename;
-    while(true) { //this is for some error checking. It was not required by the assignment
+    while(true) {
       System.out.print("Enter the name of the file to load customers:");
       filename = inputReader.nextLine();
       fullPathName = Paths.get(filename);
-      if (!Files.exists(fullPathName)){ //these three lines checks to see if the file exists, if not go
-        System.out.println("No file with that name, please try again....");//do the loop again
+      if (!Files.exists(fullPathName)){
+        System.out.println("No file with that name, please try again....");
       }
       else
         break;
     }
-    //if we got here the file must be real
     var allLines = Files.readAllLines(fullPathName);
-    // now create customers for all of the lines in the file
     for(var line: allLines){
       var splitLine = line.split(",");
       var currentCustomer = new Customer(splitLine[0], Integer.parseInt(splitLine[1]));
@@ -104,11 +78,6 @@ public class Store {
     }
   }
 
-
-  /**
-   * @param        address
-   * @param        cust
-   */
   public void makeOrder(ShippingAddress address, Customer cust)
   {
     var newOrder = new Order(address,cust);
@@ -116,13 +85,8 @@ public class Store {
     System.out.println(".......New order successfully created");
   }
 
-
-
-  /**
-   */
   public void addCustomer(Scanner inputReader)
   {
-    //because we just came from a nextInt, there is an orphaned \n on the input stream eat it
     inputReader.nextLine();
     System.out.println("Adding Customer........");
     System.out.print("Enter the new Customers name:");
@@ -132,14 +96,6 @@ public class Store {
     System.out.println(".....Finished adding new Customer Record");
   }
 
-
-  /**
-   * @return       Customer
-   * the original UML called for returning a Customer Object rather than an Optional
-   * since I didn't know when I designed this if we would hit optional by then or not
-   * but I invited anyone who asked to use Optional if they wanted to
-   * either way is perfectly fine
-   */
   public Optional<Customer> selectCustomer(Scanner reader)
   {
     System.out.print("Enter the ID of the customer to select:");
@@ -148,27 +104,16 @@ public class Store {
       if(currentCustomer.getCustomerID()==enteredID)
         return Optional.of(currentCustomer);
     }
-    //If we looked through the whole list and didn't find that customer tell the user
     System.out.println("==========================> No customer with customer ID:"+enteredID);
     return Optional.empty();
   }
 
-
-  /**
-   * @param        selectedCustomer
-   */
   public void manageCustomer(Customer selectedCustomer)
   {
-    //many of you passed our existing scanner in as an extra parameter, that is more than fine.
-    //I'm doing it this way to create a new one, both work the same way since both are reading from
-    //System.in
     Scanner secondScanner = new Scanner(System.in);
-    while(true){ //the menu loop for the manage Customer menu
+    while(true){
         printCustomerMenu(selectedCustomer.getName());
         var userChoice = secondScanner.nextInt();
-      //the syntax below is part of the 'enhanced switch' available in very recent versions of java
-      //I used the traditional version in the previous switch above, so I'm experimenting here
-      //this 'enhanced switch' doesn't require break statements.
         switch (userChoice){
           case 1 ->addAddress(secondScanner, selectedCustomer);
           case 2->{
@@ -183,22 +128,20 @@ public class Store {
 
   private ShippingAddress pickAddress(Scanner secondScanner, Customer selectedCustomer) {
     var customerAddresses = selectedCustomer.getAddresses();
-    if (customerAddresses.size() ==0){ //note, this error checking was not required
+    if (customerAddresses.size() ==0){
       System.out.println("This customer has no addresses on file, please add an address");
       addAddress(secondScanner,selectedCustomer);
-      return selectedCustomer.getAddresses().get(0); //if we are here there is only one address so use it
+      return selectedCustomer.getAddresses().get(0);
     }
     var count = 0;
-    //if we are here then there was at least one address already in the customer.
     System.out.println("Please select a shipping address from those the customer has on file");
-    for (var address : customerAddresses) {   //I'm being a little 'cute'/clever here
-      System.out.print("[" + count + "]"); //but you could do for(int count; count < customerAddresses.size(); count++ for the same effect
+    for (var address : customerAddresses) {
+      System.out.print("[" + count + "]");
       System.out.println(address.toString());
       count++;
     }
     System.out.print("Enter the number of the address for this order:");
     var addressNum = secondScanner.nextInt();
-    //again more error checking that I didn't require of you here below:
     if (addressNum >= customerAddresses.size()){
       System.out.println("Invalid entry, defaulting to the first address on file...");
       return customerAddresses.get(0);
@@ -209,7 +152,7 @@ public class Store {
 
   private void addAddress(Scanner secondScanner, Customer selectedCustomer) {
     System.out.println("Adding new address for "+ selectedCustomer.getName());
-    secondScanner.nextLine(); //lets eat the leftover '\n' from previous nextInt
+    secondScanner.nextLine();
     System.out.print("Enter Address Line 1:");
     var line1 = secondScanner.nextLine();
     System.out.print("Enter Address Line 2 or <enter> if there is none:");
