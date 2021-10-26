@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Customer {
+public abstract class Customer {
 
   private ArrayList<ShippingAddress> Addresses;
   private String Name;
@@ -36,6 +36,9 @@ public class Customer {
   public void addAddress(ShippingAddress newAddress)
   {
     Addresses.add(newAddress);
+  }
+  public void arrangeDelivery(){
+
   }
 
   @Override
