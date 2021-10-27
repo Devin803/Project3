@@ -38,8 +38,12 @@ public abstract class Customer {
     Addresses.add(newAddress);
   }
   public void arrangeDelivery(){
-
+    System.out.println("Name" + getName() + " deliver any time");
   }
+  public double payOutStandingBalance(){
+    return 0.0;
+  }
+  public abstract double PayForOrder(ArrayList<merchandiseItem> itemsInOrder);
 
   @Override
   public String toString()
